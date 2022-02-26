@@ -1,7 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import LocalStorage from "./Localstorage";
-import Socket from "./Socket";
 import { startLocalUuid } from "./startLocalUuid";
 
 const Home = () => {
@@ -20,19 +19,6 @@ const Home = () => {
 
   React.useEffect(() => {
     startLocalUuid();
-    // Socket.socket.onopen = function () {
-    //   console.log("웹소켓이 연결되었습니다.");
-    //   Socket.sendToServer({
-    //     from: LocalStorage.localUserName,
-    //     type: "join",
-    //     data: localRoomRef.current.value,
-    //   });
-    // };
-    // Socket.start();
-    // return (Socket.socket.onclose = function (message) {
-    //   console.log("소켓종료");
-    //   Socket.stop();
-    // });
   }, []);
 
   return (
