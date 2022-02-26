@@ -5,7 +5,7 @@ const Room = () => {
 
   // *********** WebRTC
 
-  const socket = new WebSocket("wss://52.78.96.234/signal");
+  const socket = new WebSocket("wss://goonzu.shop/signal");
 
   const localRoom = params.roomId;
   /**
