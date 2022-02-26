@@ -1,7 +1,7 @@
 import LocalStorage from "./Localstorage";
 
 // ** 소켓통신 시작
-const socket = new WebSocket(`ws://52.78.96.234:8080/signal`);
+const socket = new WebSocket(`wss://52.78.96.234:8080/signal`);
 //** */ Stun 으로 서버를 지정할 수 있음
 const peerConnectionConfig = {
   iceServers: [

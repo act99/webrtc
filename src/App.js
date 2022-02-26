@@ -1,8 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
-import Video from "./test/Video";
 import React from "react";
-import styled from "styled-components";
 import { Route } from "react-router-dom";
 import Home from "./test/Home";
 import Room from "./test/Room";
