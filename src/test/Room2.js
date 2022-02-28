@@ -58,16 +58,20 @@ const Room2 = () => {
   const handleLocalMediaStreamError = (error) => {
     console.log("getUserMedia 에러", error);
   };
-  const getMedia = (constraints) => {
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        track.stop();
-      });
+  const getMedia = async (constraints) => {
+    try {
+      if (localStream) {
+        localStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(getLocalMediaStream)
+        .catch(handleGetUserMediaError);
+    } catch (error) {
+      console.log(error);
     }
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(getLocalMediaStream)
-      .catch(handleGetUserMediaError);
   };
 
   // ** 버튼 시작 onClick Listener
@@ -110,14 +114,18 @@ const Room2 = () => {
 
   // ** peer connection 생성, seconde participant가 나타나면  get media, start negotiating
   // 로컬 컴퓨터와 원격 피어 간의 WebRTC 연결
-  function handleICECandidateEvent(event) {
-    if (event.candidate) {
-      sendToServer({
-        from: localUserName,
-        type: "ice",
-        candidate: event.candidate,
-      });
-      log("ICE Candidate Event: ICE candidate sent");
+  async function handleICECandidateEvent(event) {
+    try {
+      if (event.candidate) {
+        sendToServer({
+          from: localUserName,
+          type: "ice",
+          candidate: event.candidate,
+        });
+        log("ICE Candidate Event: ICE candidate sent");
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -126,29 +134,41 @@ const Room2 = () => {
     remoteVideoRef.current.srcObject = event.streams[0];
   }
 
-  const createPeerConnection = () => {
-    myPeerConnection = new RTCPeerConnection(peerConnectionConfig);
-    myPeerConnection.onicecandidate = handleICECandidateEvent;
-    myPeerConnection.ontrack = handleTrackEvent;
+  const createPeerConnection = async () => {
+    try {
+      myPeerConnection = new RTCPeerConnection(peerConnectionConfig);
+      myPeerConnection.onicecandidate = handleICECandidateEvent;
+      myPeerConnection.ontrack = handleTrackEvent;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handlePeerConnection = (msg) => {
-    createPeerConnection();
-    getMedia(mediaConstraints);
-    if (msg.data === "true") {
-      myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
+  const handlePeerConnection = async (msg) => {
+    try {
+      createPeerConnection();
+      getMedia(mediaConstraints);
+      if (msg.data === "true") {
+        myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
   // ** peer connection 끝
 
   // ** 카메라/마이크 데이터 스트림 접근
   // 로컬 비디오 요소를 미디어 스트림에 추가하고 peer로 보냄
-  const getLocalMediaStream = (mediaStream) => {
-    localStream = mediaStream;
-    localVideoRef.current.srcObject = mediaStream;
-    localStream
-      .getTracks()
-      .forEach((track) => myPeerConnection.addTrack(track, localStream));
+  const getLocalMediaStream = async (mediaStream) => {
+    try {
+      localStream = mediaStream;
+      localVideoRef.current.srcObject = mediaStream;
+      localStream
+        .getTracks()
+        .forEach((track) => myPeerConnection.addTrack(track, localStream));
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleGetUserMediaError = (error) => {
     log("navigator.getUserMedia error: ", error);
@@ -173,19 +193,27 @@ const Room2 = () => {
   // ** 카메라/마이크 데이터 스트림 접근 끝
 
   // ** ICE Candidate를 서버를 통해 peer에게 보냄
-  function handleICECandidateEvent(event) {
-    if (event.candidate) {
-      sendToServer({
-        from: localUserName,
-        type: "ice",
-        candidate: event.candidate,
-      });
-      log("ICE Candidate Event: ICE candidate sent");
+  async function handleICECandidateEvent(event) {
+    try {
+      if (event.candidate) {
+        sendToServer({
+          from: localUserName,
+          type: "ice",
+          candidate: event.candidate,
+        });
+        log("ICE Candidate Event: ICE candidate sent");
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
-  function handleTrackEvent(event) {
-    log("Track Event: set stream to remote video element");
-    remoteVideoRef.current.srcObject = event.streams[0];
+  async function handleTrackEvent(event) {
+    try {
+      log("Track Event: set stream to remote video element");
+      remoteVideoRef.current.srcObject = event.streams[0];
+    } catch (error) {
+      console.log(error);
+    }
   }
   // ** ICE Candidate를 서버를 통해 peer에게 보냄 끝
 
@@ -295,15 +323,19 @@ const Room2 = () => {
   // ** 이를 통해 WebRTC는 성공적인 연결 설정
   // ** 이후, 시그널링 서버 없이 두 피어간 직접 데이터 교환 가능
 
-  function handleAnswerMessage(message) {
+  async function handleAnswerMessage(message) {
+    try {
+      myPeerConnection
+        .setRemoteDescription(message.sdp)
+        .catch(handleErrorMessage);
+    } catch (error) {
+      console.log(error);
+    }
     log("The peer has accepted request");
 
     // Configure the remote description, which is the SDP payload
     // in our "video-answer" message.
     // myPeerConnection.setRemoteDescription(new RTCSessionDescription(message.sdp)).catch(handleErrorMessage);
-    myPeerConnection
-      .setRemoteDescription(message.sdp)
-      .catch(handleErrorMessage);
   }
   // ** RTCpeerConnection 설정을 위한 후보 인터넷 연결
 
@@ -422,9 +454,28 @@ const Room2 = () => {
   }
   // ** stop 함수 끝
 
-  React.useEffect(() => {
-    start();
+  // a listener for the socket being closed event
+  //   socket.onclose = function (message) {
+  //     log("Socket has been closed");
+  //   };
 
+  //   // an event listener to handle socket errors
+  //   socket.onerror = function (message) {
+  //     handleErrorMessage("Error: " + message);
+  //   };
+
+  React.useEffect(() => {
+    // socket.on;
+    start();
+    // socket.onopen = function () {
+    //   log("WebSocket connection opened to Room: #" + localRoom);
+    //   // send a message to the server to join selected room with Web Socket
+    //   sendToServer({
+    //     from: localUserName, // uuid를 의미
+    //     type: "offer",
+    //     data: localRoom, // room number를 의미
+    //   });
+    // };
     socket.onopen = function () {
       log("WebSocket connection opened to Room: #" + localRoom);
       // send a message to the server to join selected room with Web Socket
