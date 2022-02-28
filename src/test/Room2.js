@@ -3,15 +3,15 @@ import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 const peerConnectionConfig = {
   iceServers: [
-    { urls: "stun.l.google.com:19302" },
-    { urls: "stun1.l.google.com:19302" },
-    { urls: "stun2.l.google.com:19302" },
-    { urls: "stun3.l.google.com:19302" },
-    { urls: "stun4.l.google.com:19302" },
-    { urls: "stun01.sipphone.com" },
-    { urls: "stun.ekiga.net" },
-    { urls: "stun.fwdnet.net" },
-    { urls: "stun.ideasip.com" },
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" },
+    { urls: "stun:stun01.sipphone.com" },
+    { urls: "stun:stun.ekiga.net" },
+    { urls: "stun:stun.fwdnet.net" },
+    { urls: "stun:stun.ideasip.com" },
     // { urls: "stun:stun.stunprotocol.org:3478" },
     // { urls: "stun:stun.l.google.com:19302" }, // P2P 연결의 중계서버는 구글에서 무료로 지원하는 Google STUN 서버
   ],
