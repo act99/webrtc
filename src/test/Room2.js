@@ -33,7 +33,7 @@ const hdConstraints = {
 };
 
 const Room2 = () => {
-  const socket = new WebSocket(SOCKET_SERVER_URL);
+  let socket;
   const params = useParams();
   const localUserName = localStorage.getItem("uuid");
   const localRoom = params.roomId * 1;
@@ -465,6 +465,9 @@ const Room2 = () => {
   //   };
 
   React.useEffect(() => {
+    const Socket = new WebSocket(SOCKET_SERVER_URL);
+    socket = Socket;
+
     // socket.on;
     start();
     // socket.onopen = function () {
