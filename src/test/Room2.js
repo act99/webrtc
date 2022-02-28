@@ -415,6 +415,11 @@ const Room2 = () => {
 
   React.useEffect(() => {
     start();
+    sendToServer({
+      from: localUserName,
+      type: "join",
+      data: localRoom,
+    });
     return () => {
       stop();
     };
