@@ -27,7 +27,7 @@ const Room2 = () => {
   const socket = new WebSocket(SOCKET_SERVER_URL);
   const params = useParams();
   const localUserName = localStorage.getItem("uuid");
-  const localRoom = params.roomId;
+  const localRoom = params.roomId * 1;
 
   // ** pc => PeerConnection
   let myPeerConnection;
