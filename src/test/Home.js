@@ -1,6 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import LocalStorage from "./Localstorage";
+import Room2 from "./Room2";
 import { startLocalUuid } from "./startLocalUuid";
 
 const Home = () => {
@@ -26,6 +27,7 @@ const Home = () => {
       <p>방 선택</p>
       <input ref={localRoomRef} />
       <button onClick={onClickHandler}>버튼</button>
+      {/* <Room2 /> */}
     </div>
   );
 };
