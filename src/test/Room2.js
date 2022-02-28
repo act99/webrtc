@@ -415,11 +415,17 @@ const Room2 = () => {
 
   React.useEffect(() => {
     start();
-    sendToServer({
-      from: localUserName,
-      type: "join",
-      data: localRoom,
-    });
+
+    socket.onopen = function () {
+      log("WebSocket connection opened to Room: #" + localRoom);
+      // send a message to the server to join selected room with Web Socket
+      sendToServer({
+        from: localUserName, // uuid를 의미
+        type: "join",
+        data: localRoom, // room number를 의미
+      });
+    };
+
     return () => {
       stop();
     };

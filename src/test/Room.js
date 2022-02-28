@@ -207,21 +207,22 @@ const Room = () => {
       .catch(handleGetUserMediaError);
   }
 
-  // create peer connection, get media, start negotiating when second participant appears
-  function handlePeerConnection(message) {
-    createPeerConnection();
-    getMedia(mediaConstraints);
-    if (message.data === "true") {
-      myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
-    }
-  }
-
-  /**
-   * RTCPeerConnection
-   * 로컬 컴퓨터와 원격 피어 간의 WebRTC 연결을 나타낸다. 두 피어 간의 효율적인 데이터 스트리밍을 처리하는데 사용된다.
-   */
   function createPeerConnection() {
     myPeerConnection = new RTCPeerConnection(peerConnectionConfig);
+
+    // create peer connection, get media, start negotiating when second participant appears
+    function handlePeerConnection(message) {
+      createPeerConnection();
+      getMedia(mediaConstraints);
+      if (message.data === "true") {
+        myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
+      }
+    }
+
+    /**
+     * RTCPeerConnection
+     * 로컬 컴퓨터와 원격 피어 간의 WebRTC 연결을 나타낸다. 두 피어 간의 효율적인 데이터 스트리밍을 처리하는데 사용된다.
+     */
 
     // event handlers for the ICE negotiation process
     myPeerConnection.onicecandidate = handleICECandidateEvent;
