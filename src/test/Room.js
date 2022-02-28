@@ -5,7 +5,8 @@ const Room = () => {
 
   // *********** WebRTC
 
-  const socket = new WebSocket("wss://goonzu.shop/signal");
+  // const socket = new WebSocket("wss://goonzu.shop/signal");
+  const socket = new WebSocket("ws://52.78.96.234:8080/signal");
 
   const localRoom = params.roomId;
   /**
@@ -420,9 +421,8 @@ const Room = () => {
   }
   React.useEffect(() => {
     start();
-    return () => {
-      socket.onclose();
-    };
+    return () => stop();
+    // socket.onclose();
   }, []);
 
   // *********** WebRTC
