@@ -35,9 +35,13 @@ const Room = () => {
    */
   // WebRTC media
   const mediaConstraints = {
-    audio: true,
-    video: true,
+    audio: false,
+    video: false,
   };
+  // const noMediaConstraints = {
+  //   audio: false,
+  //   video: false,
+  // };
 
   // WebRTC variables
   let localStream;
@@ -104,15 +108,6 @@ const Room = () => {
      * onopen을 통해 소켓이 연결된 경우에만 서버로 메세지 보낸다.
      */
     // add an event listener to get to know when a connection is open
-    socket.onopen = function () {
-      log("WebSocket connection opened to Room: #" + localRoom);
-      // send a message to the server to join selected room with Web Socket
-      sendToServer({
-        from: localUserName, // uuid를 의미
-        type: "join",
-        data: localRoom, // room number를 의미
-      });
-    };
 
     // a listener for the socket being closed event
     socket.onclose = function (message) {
@@ -201,10 +196,10 @@ const Room = () => {
         track.stop();
       });
     }
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(getLocalMediaStream)
-      .catch(handleGetUserMediaError);
+    // navigator.mediaDevices
+    //   .getUserMedia(constraints)
+    //   .then(getLocalMediaStream)
+    //   .catch(handleGetUserMediaError);
   }
 
   // create peer connection, get media, start negotiating when second participant appears
@@ -420,6 +415,16 @@ const Room = () => {
     myPeerConnection.addIceCandidate(candidate).catch(handleErrorMessage);
   }
   React.useEffect(() => {
+    socket.onopen = function () {
+      log("WebSocket connection opened to Room: #" + localRoom);
+      // send a message to the server to join selected room with Web Socket
+      sendToServer({
+        from: localUserName, // uuid를 의미
+        type: "join",
+        data: localRoom, // room number를 의미
+      });
+    };
+
     start();
     return () => stop();
     // socket.onclose();
